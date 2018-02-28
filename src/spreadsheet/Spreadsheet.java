@@ -7,12 +7,13 @@ import common.api.value.LoopValue;
 import common.api.value.StringValue;
 import common.api.value.Value;
 import common.api.value.ValueEvaluator;
+import java.util.Iterator;
 
 import java.util.*;
 
 public class Spreadsheet implements Tabular {
   private final Map<CellLocation, Cell> cells = new HashMap<>();
-  private final Deque<Cell> invalidCells = new ArrayDeque<>();
+  private final Set<Cell> invalidCells = new HashSet<>();
 
   public void setExpression(CellLocation location, String expression) {
     Cell cell = null;
@@ -39,7 +40,7 @@ public class Spreadsheet implements Tabular {
 
   public void invalidateCell(Cell cell) {
     if (!invalidCells.contains(cell)) {
-      invalidCells.addLast(cell);
+      invalidCells.add(cell);
     }
   }
 
@@ -67,8 +68,8 @@ public class Spreadsheet implements Tabular {
 
   public void recompute() {
     while (!invalidCells.isEmpty()) {
-      Cell cell = invalidCells.getFirst();
-      recomputeCell(cell);
+      Iterator<Cell> it = invalidCells.iterator();
+      recomputeCell(it.next());
     }
   }
 
